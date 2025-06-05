@@ -17,15 +17,15 @@
 AsyncDelay timer;
 bool paused  = true;
 bool reset   = true;
-bool click = false;
+bool clicked = false;
 
-uint8_t wheel_center = 0;
+uint8_t wheel_pos = 0;
 uint8_t catch_pos    = 0;
 
 
 // Interrupt handlers
 void handle_pause()  {paused = IsPaused; reset = true;}
-void handle_buttons() {reset = DoubleClick; if (!reset) click = SingleClick;}
+void handle_buttons() {reset = DoubleClick; if (!reset) clicked = SingleClick;}
 
 
 void setup() {
@@ -51,22 +51,20 @@ void setup() {
 void loop() {
   if (!paused) {
     if (reset) {
-      click      = false;  // make sure there was no extra bounce
-      wheel_center = random(0,9);
-      catch_pos = random(0,9);
-      while (catch_pos == wheel_center) catch_pos = random(0,9);
-
+      clicked   = false;  // make sure there was no extra bounce
+      wheel_pos = random(0,9);
+      catch_pos = (wheel_pos + 5) % 10;  // Place catch pixel on opposite side of field
       reset = false;
     }
     if (timer.isExpired()) {
-      wheel_center = (wheel_center + 1) % 10;  // Keep incrememnting between 0 and 9
+      wheel_pos = (wheel_pos + 1) % 10;  // Keep incrememnting between 0 and 9
       
       uint8_t lightup[10] = {0};
 
       // Build array of pixel settings
-      lightup[(wheel_center + 1) % 10] = 1;
-      lightup[wheel_center]            = 1;
-      lightup[(wheel_center - 1) % 10] = 1;
+      lightup[wheel_pos]            = 1;
+      lightup[(wheel_pos - 1) % 10] = 1;
+      lightup[(wheel_pos - 2) % 10] = 1;
       lightup[catch_pos] = 2;
 
       for (uint8_t i=0; i<10; i++) {
@@ -75,14 +73,16 @@ void loop() {
         else if (lightup[i] == 0) CircuitPlayground.setPixelColor(i, 0);
       }
       timer.repeat();
-      
+
     }
     if (clicked) {
       clicked = false;
       timer.expire();
 
-
-
+      if (catch_pos == wheel_pos || catch_pos == (wheel_pos-1)%10 || catch_pos == (wheel_pos-2)%10) {
+        CircuitPlayground.playTone(440.0, 150);
+      }
+      paused = true;
     }
 
   } else {
