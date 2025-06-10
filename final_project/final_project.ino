@@ -61,7 +61,7 @@ void loop() {
         wheel_len = 3 - map(score > 20? 20:score, 0, 20, 0, 2);
         catch_pos = (wheel_pos + 5) % 10;  // Place catch pixel on opposite side of field
         reset = false;
-        
+
         delay(10);  // Try and debounce
         clicked = false;
 
@@ -95,8 +95,18 @@ void loop() {
         for (uint8_t i=0; i<wheel_len; i++) {caught = caught || catch_pos == (wheel_pos-i)%10;}
         
         if (caught) {
-          CircuitPlayground.playTone(440.0, 150);
+          CircuitPlayground.playTone(524.0, 200);
+          CircuitPlayground.playTone(587.0, 100);
+          CircuitPlayground.playTone(659.0, 50);
+          CircuitPlayground.playTone(587.0, 150);
+          CircuitPlayground.playTone(524.0, 200);
+          
           score++;
+        }
+        else {
+          CircuitPlayground.playTone(220.0, 100);
+          CircuitPlayground.playTone(247.0, 100);
+          CircuitPlayground.playTone(220.0, 100);
         }
         mode = false;
       }
