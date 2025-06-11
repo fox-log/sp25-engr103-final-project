@@ -34,7 +34,7 @@ void handle_buttons() {clicked = true;}
 void setup() {
   Serial.begin(9600);
   CircuitPlayground.begin();
-  while (!Serial);  // Await serial connection before moving on
+  // while (!Serial);  // Await serial connection before moving on
   
   // Initialize the switch and buttons to digital reads
   pinMode(slidder, INPUT_PULLUP);
@@ -119,9 +119,9 @@ void loop() {
       // Turn on a number of pixels equal to the score's ones place and make sure everythin else is off
       // Simply using "clear_pixels" causing a lot of clickering, so want to manually turn off unwanted lights
       for (ushort i=0; i<10; i++) {CircuitPlayground.setPixelColor(i, i < num_active? color:0x00);}
-      Serial.print(score);
-      Serial.print(" ");
-      Serial.println(num_active);
+      // Serial.print(score);
+      // Serial.print(" ");
+      // Serial.println(num_active);
 
       if (clicked) {  // Check for double click to start new game
         if (DoubleClick) {reset = true; mode = true;}
